@@ -1,148 +1,228 @@
+// Day1 - LinkedList:
+// ======================
+//    //1. indsert node after given node
+//         void InsertAfter(int data, int afterData); 
+//    //2. indsert node before given node
+//         void InsertBefore(int data, int beforeData); 	
+//    //3. get number of nodes 
+//         int GetCount();
+//    //4. get data in the given 		 			               
+//         int GetDataByIndex(int index);
+
+
 #include <iostream>
 using namespace std;
 
-class Node {
-public:
-    int data;
-    Node* next;
 
-    Node(int value) {
-        data = value;
-        next = nullptr;
-    }
+
+
+struct node {
+    int data;
+    node * next;
+    node *prev;
 };
 
-class LinkedList {
-private:
-    Node* head;
+class linkedList{
+    node*head;
+    node * tail;
 
-public:
-    LinkedList() {
+  
+    public:
+
+      linkedList(){
         head = nullptr;
-    }
-
-    ~LinkedList() {
+        tail = nullptr;
 
     }
+    ~linkedList(){
 
-    void InsertAfter(int data, int afterData) {
-        Node* temp = head;
+    node *temp;
 
-        while (temp != nullptr && temp->data != afterData) {
+    while(head != nullptr){
+
+        temp = head;
+        head = head->next;
+
+        delete temp;
+    }
+    
+
+    tail = nullptr;
+}
+
+    linkedList(const linkedList& other) {
+
+    head = nullptr;
+    tail = nullptr;
+
+    node* temp = other.head;
+
+    while(temp != nullptr) {
+
+        push(temp->data);
+
+        temp = temp->next;
+    }
+}
+
+    linkedList& operator=(const linkedList& other) {
+
+    if(this == &other)
+        return *this;
+
+    while(head != nullptr) {
+
+        node* temp = head;
+        head = head->next;
+
+        delete temp;
+    }
+
+    tail = nullptr;
+
+    node* temp = other.head;
+
+    while(temp != nullptr) {
+
+        push(temp->data);
+        temp = temp->next;
+    }
+
+    return *this;
+}
+
+    void push(int value){
+
+        node *newnode = new node;
+
+        if(head == nullptr){
+            node *newnode = new node;
+            head = newnode;
+            tail = newnode;
+            newnode->prev = nullptr;
+            newnode->next = nullptr;
+            newnode->data = value;
+            return ;
+        }
+
+        tail->next = newnode;
+        newnode->prev = tail;
+        newnode->next = nullptr;
+        newnode->data = value;
+        tail = newnode;
+        
+    }
+
+    void InsertAfter(int value, int after){
+        node *temp = head;
+    
+       
+        while(temp != nullptr && temp->data != after ){
+            
             temp = temp->next;
         }
 
-        if (temp == nullptr) {
-            cout << afterData << " not found"<<endl;
-            return;
+        if(temp == nullptr){
+            cout<<"NOT FOUND"<<endl;
+            return ;
         }
 
-        Node* newNode = new Node(data);
+        node *newnode = new node;
+        newnode->data = value;
+        newnode->next = temp->next;
+        if(temp->next != nullptr){
+            newnode->next->prev = newnode;
+        }
+        temp->next = newnode;
+        newnode->prev = temp;
 
-        newNode->next = temp->next;
-        temp->next = newNode;
     }
 
-    void InsertBefore(int data, int beforeData) {
-        if (head == nullptr)
-            return;
+    void InsertBefore(int value, int before){
 
-        if (head->data == beforeData) {
-            Node* newNode = new Node(data);
-            newNode->next = head;
-            head = newNode;
-            return;
+        node *temp = head;
+        node *newnode = new node;
+
+        while(temp != nullptr && temp->next->data != before){
+                temp = temp->next;
+        
+        };
+
+        if(temp == nullptr){
+            cout<<"NOT FOUND"<<endl;
+            return ;
         }
 
-        Node* temp = head;
+        newnode->next = temp->next ;
+            if(temp->next->prev != nullptr)
+                temp->next->prev = newnode;
 
-        while (temp->next != nullptr && temp->next->data != beforeData) {
-            temp = temp->next;
-        }
+            temp->next = newnode;
+            newnode->prev = temp;
+            newnode->data = value;
 
-        if (temp->next == nullptr) {
-            cout << beforeData << " not found!\n";
-            return;
-        }
-
-        Node* newNode = new Node(data);
-
-        newNode->next = temp->next;
-        temp->next = newNode;
     }
-
-    int GetCount() {
-        int count = 0;
-        Node* temp = head;
-
-        while (temp != nullptr) {
-            count++;
-            temp = temp->next;
-        }
-
-        return count;
-    }
-
-    int GetDataByIndex(int index) {
-        if (index < 0)
+    int GetCount(){
+        if (head == nullptr){
+            cout<<"EMPTY "<<endl;
             return -1;
-
-        Node* temp = head;
-        int count = 0;
-
-        while (temp != nullptr) {
-            if (count == index)
-                return temp->data;
-
-            count++;
-            temp = temp->next;
         }
+        node *count = new node;
+        count = head;
+        int counter = 0;
+        while(count != nullptr){
+            count = count->next;
+            counter++;
+        }
+        delete count;
 
-        return -1;
+        return counter;
+
     }
+        void display(){
 
-    void Append(int data) {
-        Node* newNode = new Node(data);
+        if (head ==nullptr){
 
-        if (head == nullptr) {
-            head = newNode;
+            cout<<"Queue is empty"<<endl;
             return;
         }
+        node *dis = head;
 
-        Node* temp = head;
+        while(dis != nullptr){
+            cout<<dis->data<<" ";
+            dis = dis->next;
 
-        while (temp->next != nullptr) {
-            temp = temp->next;
-        }
-
-        temp->next = newNode;
+        };
+        cout<<endl;
     }
 
+    void GetDataByIndex(int index){
+        node *current = head;
+        int temp = 0;
+        for(int i = 1 ; i <=index ; i++){
+            temp = current->data;
+            current = current->next;
+        }
+        cout<<"Index "<<index<<" = "<<temp;
+
+    }
+
+    
 };
 
 int main() {
-    LinkedList list;
-
-    list.Append(10);
-    list.Append(20);
-    list.Append(30);
-
-    list.InsertAfter(25, 20);
-
-    list.InsertBefore(15, 20);
-
-    list.InsertBefore(5, 10);
-    list.InsertAfter(40, 30);
-
-    cout <<"number of nodes "<<list.GetCount() << endl;
-    cout <<list.GetDataByIndex(0) << endl;
-    cout <<list.GetDataByIndex(3) << endl;
-    cout <<list.GetDataByIndex(6) << endl;
-    cout <<list.GetDataByIndex(-1) << endl;
-
-    list.InsertAfter(100, 999);
-    list.InsertBefore(100, 999);
-
-    return 0;
+    linkedList l1;
+    l1.push(10);
+    l1.push(20);
+    l1.push(30);
+    l1.push(40);
+    l1.display();
+    l1.InsertAfter(25,20);
+    l1.InsertBefore(35,40);
+    cout<<"Nodes = "<<l1.GetCount()<<endl;
+    l1.display();
+    l1.GetDataByIndex(2);
+    cout<<endl;
+    
 }
 
